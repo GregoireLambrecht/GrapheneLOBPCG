@@ -6,4 +6,4 @@ Le commit "PuitsPotentiel" est relatif à la résolution de l'équation de Schro
 fournit par nos encadrants et codés par des chercheurs du CERMICS (laboratoire de mathématiques appliquées de l'Ecole). Ce fichier comporte un algorithme de recherche de
 valeurs propres, et de vecteurs propres. Le fichier PuitsPotentiel est la résolution de l'équation en 1D, 2D et 3D, pour un potentiel V donnée par l'utilisateur.
 
-Le fichier DiagBand est notre travail sur la résolution de l'équation dans le graphène. Pour le moment il consiste dans le calcul des valeurs propres de Hk pour un k donné.
+Le fichier DiagBand est notre travail sur la résolution de l'équation dans le graphène. Pour le moment il consiste dans le calcul des valeurs propres de Hk pour un k donné et un poteniel V donné.
