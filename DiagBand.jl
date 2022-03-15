@@ -43,7 +43,14 @@ end
 
 
 p = init_struct(100,2)
+
+b1 = (2*pi/(P_2D.a*sqrt(3))) .* [1, sqrt(3)]
+b2 = (2*pi/(P_2D.a*sqrt(3))) .* [1, -sqrt(3)]
+
+#Le réseau dual. Il faut prendre un vecteur k = Λb(n), n un vecteur de Z^2
+Λb = (n -> n[1] .* b1 .+ n[2] .* b2)
+
 #le k du dual pour Hk
-k = [1,1]
+k = Λb([1,1])
 V = [ rand() for i=1:p.n,j = 1:p.n]
 solve(V,p,k,5)
