@@ -56,15 +56,22 @@ function solve(V,p,k)
 end
 
 #Une dimension
-p = init_struct(200,1)
-x = [(i*1/p.n -0.5) for i=1:p.n]
-V = -exp.(-(x.^2)./ 0.01)
-(E,ϕ) = solve(V,p,1)
-plot(x,ϕ)
+#p = init_struct(200,1)
+#x = [(i/p.n) for i=1:p.n]
+#V = -200*exp.((-(x.-0.5).^2)./ 0.1)
+#(E,ϕ) = solve(V,p,2)
+
+#plot(x,ϕ)
+
+function f(x,y)
+	-2000*exp(-((x-0.5)^2+(y-0.5)^2)/0.1)
+end
+
 #plot!(x,V)
 #Deux dimensions
-par = init_struct(100,2)
-y = [(i*1/p.n -0.5) for i=1:p.n]
-VS = [ exp(-(x[i]^2 +x[j]^2)/0.01) for i=1:par.n,j = 1:par.n]
-(ES,ϕS) = solve(VS,par,1)
+p = init_struct(100,2)
+x = [((i-1)/p.n) for i=1:p.n]
+y = [((i-1)/p.n) for i=1:p.n]
+VS = linearize([ f(x[i],y[j]) for i=1:p.n, j=1:p.n])
+(ES,ϕS) = solve(VS,p,1)
 Plots.surface(x,y,ϕS)
