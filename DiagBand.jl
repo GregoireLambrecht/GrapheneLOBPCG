@@ -4,6 +4,14 @@ using Plots
 using KrylovKit
 using LinearAlgebra
 
+a = 1
+
+b1 = (2*pi/(a*sqrt(3))) .* [1, sqrt(3)]
+b2 = (2*pi/(a*sqrt(3))) .* [1, -sqrt(3)]
+
+#Le réseau dual. Il faut prendre un vecteur k = Λb(n), n un vecteur de Z^2
+Λb = (n -> n[1] .* b1 .+ n[2] .* b2)
+
 mutable struct Params
 	dim #La dimension : 1, 2 ou 3
 	n# La précision
@@ -14,7 +22,7 @@ end
 
 function init_struct(n,dim)
 	k_axis = fftfreq(n)*n
-	k_grid = [[k_axis[i],k_axis[j]] for i=1:n, j=1:n]
+	k_grid = [Λb([k_axis[i],k_axis[j]]) for i=1:n, j=1:n]
 	k2_grid = [norm(k_grid[i,j])^2 for i=1:n, j=1:n]
 	k2_grid = norm.(k2_grid).^2
 	k2lin = linearize(k2_grid)
@@ -36,7 +44,6 @@ function solve(V,p,k,l)
 	Δklin = linearize(δ)
 	VLinFour = linearize(fft(V))
 	H = X->-Δklin.*X + convolve(VLinFour,X) # X est en fourier et linéraire
-	l = 100 # nb modes propres
 	(λs,ϕs,cv) = solve_lobpcg(H,N,l,p.k2lin;tol=1e-7)
 	λs
 end
@@ -44,13 +51,8 @@ end
 
 p = init_struct(100,2)
 
-b1 = (2*pi/(P_2D.a*sqrt(3))) .* [1, sqrt(3)]
-b2 = (2*pi/(P_2D.a*sqrt(3))) .* [1, -sqrt(3)]
-
-#Le réseau dual. Il faut prendre un vecteur k = Λb(n), n un vecteur de Z^2
-Λb = (n -> n[1] .* b1 .+ n[2] .* b2)
 
 #le k du dual pour Hk
 k = Λb([1,1])
 V = [ rand() for i=1:p.n,j = 1:p.n]
-solve(V,p,k,5)
+λ = solve(V,p,k,5)
