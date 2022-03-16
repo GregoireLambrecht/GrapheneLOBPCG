@@ -44,15 +44,21 @@ function solve(V,p,k)
 	V_four = fft(V)
 	H = X->4*pi^2 .*p.k2lin.*X .+ linearize(convolve(V_four,Reshape(X,p))) # X est en fourier et linéraire
 	l = k+1 # nb modes propres
-	#if p.solver == "lobpcg"
-	(λs,ϕs,cv) = solve_lobpcg(H,N,l,p.k2lin;tol=1e-7)
-	#else
-		#eis = []
-		#[H(ei) for ei in ]
-		#(λs,ϕs) = eigen(Array(H))
-	#end
-	# k ieme etat excite
-	ψ = ϕs[k]; Eψ = λs[k]
+	if p.solver == "lobpcg"
+		(λs,ϕs,cv) = solve_lobpcg(H,N,l,p.k2lin;tol=1e-7)
+		ψ = ϕs[k]; Eψ = λs[k]
+	else
+		eis = zeros(p.n,p.n,p.n,p.n)
+		for i =1:p.n
+			for j=1:p.n
+				eis[i,j,i,j] = 1
+			end
+		end
+		MH = [H(linearize([eis[i,j,k,l] for k=1:p.n, l=1:p.n])) for i=1:p.n, j=1:p.n]
+		MH = [MH[i][j] for i=1:N,j=1:N]
+		(λs,ϕs) = eigen(MH)
+		ψ = [ϕs[i,k] for i=1:N]; Eψ = λs[k]
+	end
 	ψ = Reshape(ψ,p)
 	Mψ = ifft(ψ)
 	Mψ ./= norm(Mψ)
@@ -60,19 +66,17 @@ function solve(V,p,k)
 end
 
 #Une dimension. x pour l'abscisse, V pour le potentiel, k pour le mode
-function D1(x,V,k)
-	p = init_struct(100,1)
+function D1(x,V,n,k)
+	p = init_struct(n,1)
 	(E,ϕ) = solve(V,p,k)
 	pl = plot(x,abs2.(ϕ))
 	savefig(pl,"pot1d.pdf")
 end
 
-x = [(i/p.n) for i=1:p.n]
-D1(x,-200*exp.((-(x.-0.5).^2)./ 0.1),4)
 
 #2D, y pour l'ordonnée, V pour le potentiel (tenseur d'ordre 2)
-function D2(x,y,V,k)
-	p = init_struct(100,2)
+function D2(x,y,V,n,k)
+	p = init_struct(n,2)
 	(E,ϕ) = solve(V,p,k)
 	pl = Plots.heatmap(x,y,abs2.(ϕ))
 	surf = Plots.surface(x,y,abs2.(ϕ))
@@ -84,4 +88,23 @@ function f(x,y)
 	-2000*exp(-((x-0.5)^2+(y-0.5)^2)/0.1)
 end
 
-D2(x,x,[ f(x[i],y[j]) for i=1:p.n, j=1:p.n],3)
+function timeCompare(enu)
+	N = [i for i=10:enu]
+	X = [[i/N[j] for i=1:N[j]] for j=1:(enu-9)]
+	V = [[ f(X[l][i],X[l][j]) for i=1:N[l], j=1:N[l]] for l=1:(enu-9)]
+	P = [init_struct(N[j],2) for j=1:(enu-9)]
+	TLOBPCG = [(@elapsed solve(V[i],P[i],1)) for i=1:(enu-9)]
+	for i=1:(enu-9)
+		P[i].solver = "eig"
+	end
+	TLIN = [(@elapsed solve(V[i],P[i],1)) for i=1:(enu-9)]
+	pl = plot(N,TLOBPCG)
+	pl = plot!(N,TLIN)
+	savefig(pl,"Times.pdf")
+end
+
+n=200
+x = [(i/n) for i=1:n]
+D1(x,-200*exp.((-(x.-0.5).^2)./ 0.1),n,4)
+D2(x,x,[ f(x[i],x[j]) for i=1:n, j=1:n],n,2)
+timeCompare(25)
