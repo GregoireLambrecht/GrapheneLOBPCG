@@ -50,9 +50,9 @@ end
 
 
 p = init_struct(100,2)
-
-
-#le k du dual pour Hk
-k = Λb([1,1])
 V = [ rand() for i=1:p.n,j = 1:p.n]
-λ = solve(V,p,k,5)
+function solveVect(k)
+	solve(V,p,k,1)
+end
+
+#λ = solve(V,p,k,5)
