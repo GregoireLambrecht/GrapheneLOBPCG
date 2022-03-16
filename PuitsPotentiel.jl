@@ -65,11 +65,11 @@ function solve(V,p,k)
 	(Eψ,Mψ)
 end
 
-#Une dimension. x pour l'abscisse, V pour le potentiel, k pour le mode
+#Une dimension. x pour l'abscisse, V pour le potentiel, k pour le mode, n pour la précision
 function D1(x,V,n,k)
 	p = init_struct(n,1)
 	(E,ϕ) = solve(V,p,k)
-	pl = plot(x,abs2.(ϕ))
+	pl = plot(x,abs2.(ϕ),xlabel = "x", ylabel = "Densité", title = "Densité de Probabilité pour le mode $k")
 	savefig(pl,"pot1d.pdf")
 end
 
@@ -78,8 +78,8 @@ end
 function D2(x,y,V,n,k)
 	p = init_struct(n,2)
 	(E,ϕ) = solve(V,p,k)
-	pl = Plots.heatmap(x,y,abs2.(ϕ))
-	surf = Plots.surface(x,y,abs2.(ϕ))
+	pl = Plots.heatmap(x,y,abs2.(ϕ), xlabel = "x",ylabel = "y", title = "Densité de Probabilité pour le mode $k")
+	surf = Plots.surface(x,y,abs2.(ϕ), xlabel = "x",ylabel = "y",title = "Densité de Probabilité pour le mode $k")
 	savefig(pl,"pot2dheat.pdf")
 	savefig(surf,"pot2surf.pdf")
 end
@@ -98,8 +98,8 @@ function timeCompare(enu)
 		P[i].solver = "eig"
 	end
 	TLIN = [(@elapsed solve(V[i],P[i],1)) for i=1:(enu-9)]
-	pl = plot(N,TLOBPCG)
-	pl = plot!(N,TLIN)
+	pl = plot(N,TLOBPCG,xlabel = "N : taille de la discrétisation", ylabel = "Temps en seconde",title = "Comparaison des temps d'éxecution",label = "LOBPCG")
+	pl = plot!(N,TLIN, label = "LinearAlgebra")
 	savefig(pl,"Times.pdf")
 end
 
