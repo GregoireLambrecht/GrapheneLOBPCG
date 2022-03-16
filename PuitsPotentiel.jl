@@ -42,7 +42,7 @@ convolve(X,V) = fft(ifft(X).*ifft(V))# X et V en fourier
 function solve(V,p,k)
 	N = p.n^p.dim
 	VLinFour = linearize(fft(V))
-	H = X->-4*pi^2 .*p.k2lin.*X + convolve(VLinFour,X) # X est en fourier et linéraire
+	H = X->4*pi^2 .*p.k2lin.*X + convolve(VLinFour,X) # X est en fourier et linéraire
 	l = 5 # nb modes propres
 	(λs,ϕs,cv) = solve_lobpcg(H,N,l,p.k2lin;tol=1e-7)
 	#(λs,ϕs) = eigsolve(H,p.k2lin,l)
