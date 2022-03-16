@@ -1,4 +1,4 @@
-include("lobpcg.jl ")
+include("lobpcg.jl")
 using FFTW
 using Plots
 using KrylovKit

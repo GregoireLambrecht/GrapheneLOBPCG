@@ -7,4 +7,4 @@ fournit par nos encadrants et codés par des chercheurs du CERMICS (laboratoire 
 valeurs propres, et de vecteurs propres. Le fichier PuitsPotentiel est la résolution de l'équation en 1D, 2D et 3D, pour un potentiel V donnée par l'utilisateur.
 
 Les fichiers DiagBand et DiagBandCalc sont nos traveaux sur la résolution de l'équation dans le graphène. Le fichier DiagBand consiste dans le calcul des valeurs propres de Hk pour un k donné et un poteniel V donné.
-Le fichier DiagBand trace le diagramme de bande. 
+Le fichier DiagBand trace le diagramme de bande.
