@@ -1,7 +1,6 @@
 include("lobpcg.jl")
 using FFTW
 using Plots
-using KrylovKit
 using LinearAlgebra
 
 a = 1
@@ -42,8 +41,8 @@ function solve(V,p,k,l)
 	δ = [1im .* k .+ p.k_grid[i,j] for i=1:p.n,j=1:p.n]
 	δ = δ'δ
 	Δklin = linearize(δ)
-	VLinFour = linearize(fft(V))
-	H = X->-Δklin.*X + convolve(VLinFour,X) # X est en fourier et linéraire
+	V_Four = fft(V)
+	H = X->-Δklin.*X + linearize(convolve(V_Four,Reshape(X,p))) # X est en fourier et linéraire
 	(λs,ϕs,cv) = solve_lobpcg(H,N,l,p.k2lin;tol=1e-7)
 	λs
 end
