@@ -153,14 +153,9 @@ n=200
 x = [(i/n) for i=1:n]
 D1(x,-200*exp.((-(x.-0.5).^2)./ 0.1),n,4)
 D2(x,x,[ f(x[i],x[j]) for i=1:n, j=1:n],n,2)
+#METTRE n IMPAIRE
 n=51
 x = [(i/n) for i=1:n]
-V = [ g(x[i],y[j],z[k]) for i=1:n, j=1:n, k=1:n]
+V = [ g(x[i],x[j],x[k]) for i=1:n, j=1:n, k=1:n]
 D3(x,x,x,V,3,n)
-timeCompare(25)
-
-n=51
-x = [((i-1)/n) for i=1:n]
-V = [ f(x[i],y[j],z[k]) for i=1:n, j=1:n, k=1:n]
-
-D3(x,y,z,V,3,n)
+timeCompare(50)
