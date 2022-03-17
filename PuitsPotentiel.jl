@@ -98,7 +98,7 @@ function timeCompare(enu)
 		P[i].solver = "eig"
 	end
 	TLIN = [(@elapsed solve(V[i],P[i],1)) for i=1:(enu-9)]
-	pl = plot(N,TLOBPCG,xlabel = "N : taille de la discrétisation", ylabel = "Temps en seconde",title = "Comparaison des temps d'éxecution pour la 2D",label = "LOBPCG")
+	pl = plot(N,TLOBPCG,xlabel = "N^2 : taille de la discrétisation", ylabel = "Temps en seconde",title = "Comparaison des temps d'éxecution pour la 2D",label = "LOBPCG")
 	pl = plot!(N,TLIN, label = "LinearAlgebra")
 	savefig(pl,"Times.pdf")
 end
@@ -125,6 +125,7 @@ function g(x,y,z)
     end
 end
 
+#3D, z pour l'ordonnée. V tenseur d'ordre 3
 function D3(x,y,z,V,k,n)
 	p = init_struct(n,3)
 	(ES,ϕS) = solve(V,p,k)
